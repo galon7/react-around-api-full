@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
-      .send({ message: 'Authorization Required1' });
+      .send({ message: 'Authorization Required' });
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -17,8 +17,8 @@ module.exports = (req, res, next) => {
     payload = jwt.verify(token, 'extreme-secret-key');
   } catch (err) {
     return res
-      .status(StatusCodes.UNAUTHORIZED)
-      .send({ message: 'Authorization Required2' });
+      .status(StatusCodes.FORBIDDEN)
+      .send({ message: 'Authorization Required' });
   }
 
   req.user = payload;

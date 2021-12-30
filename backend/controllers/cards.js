@@ -22,16 +22,22 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .orFail()
-    .then((card) => {
-      res.status(StatusCodes.OK).send({ data: card });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') res.status(StatusCodes.BAD_REQUEST).send({ message: err.message });
-      else if (err.name === 'DocumentNotFoundError') res.status(StatusCodes.NOT_FOUND).send({ message: err.message });
-      else res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: err.message });
-    });
+  Card.find({ _id: req.params.cardId }).then((cardFound) => {
+    const cardFoundOwner = cardFound[0].owner.valueOf();
+    if (cardFoundOwner === req.user._id) {
+      Card.findByIdAndRemove(req.params.cardId)
+        .orFail()
+        .then((card) => res.status(StatusCodes.OK).send({ data: card }))
+        .catch((err) => {
+          if (err.name === 'CastError') res.status(StatusCodes.BAD_REQUEST).send({ message: err.message });
+          else if (err.name === 'DocumentNotFoundError') res.status(StatusCodes.NOT_FOUND).send({ message: err.message });
+          else res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: err.message });
+        });
+    } else {
+      const error = new Error('Unauthorized');
+      res.status(StatusCodes.UNAUTHORIZED).send({ message: error.message });
+    }
+  });
 };
 
 module.exports.likeCard = (req, res) => {
