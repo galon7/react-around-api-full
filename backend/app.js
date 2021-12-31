@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const cors = require('cors');
 
 const { PORT = 3000 } = process.env;
 const cards = require('./routes/cards');
@@ -23,6 +24,13 @@ mongoose
   .connect('mongodb://localhost:27017/aroundb')
   .then(console.log('Connected to DB'))
   .catch((err) => console.log(`DB connection error: ${err}`));
+
+const allowedOrigins = [
+  'https://galon.students.nomoreparties.sbs',
+  'http://galon.students.nomoreparties.sbs',
+  'http://localhost:3001', // Use the port your frontend is served on
+];
+app.use(cors({ origin: allowedOrigins }));
 
 app.use(express.json());
 app.post('/signin', login);

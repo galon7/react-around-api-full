@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 
+// eslint-disable-next-line
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 

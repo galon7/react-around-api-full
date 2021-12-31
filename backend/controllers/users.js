@@ -30,7 +30,7 @@ module.exports.getUser = (req, res) => {
 module.exports.getCurrentUser = (req, res) => {
   User.findById(req.user._id)
     .then((user) => {
-      res.send({ user });
+      res.send(user);
     }).catch((err) => {
       res.status(err.statusCode).send({ message: err.message });
     });
