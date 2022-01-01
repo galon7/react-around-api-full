@@ -1,42 +1,42 @@
-const { StatusCodes } = require('http-status-codes');
-
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { StatusCodes } = require('http-status-codes');
+const { ErrorHandler } = require('../middlewares/errors');
+
 const User = require('../models/user');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(StatusCodes.OK).send({ data: users }))
-    .catch((err) => {
-      console.log(err);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: 'An error has occurred on the server' });
-    });
-};
-
-module.exports.getUser = (req, res) => {
-  User.findById(req.params.id)
-    .orFail(() => {
-      const error = new Error('No user found with that id');
-      error.statusCode = StatusCodes.NOT_FOUND;
-      throw error;
+    .then((users) => {
+      if (!users) {
+        throw new Error();
+      }
+      res.status(StatusCodes.OK).send(users);
     })
-    .then((user) => {
-      res.send({ data: user });
-    }).catch((err) => {
-      res.status(err.statusCode).send({ message: err.message });
-    });
+    .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        throw new ErrorHandler(StatusCodes.NOT_FOUND, 'No user found with that id');
+      }
+      res.send({ data: user });
+    }).catch(next);
+};
+
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
+      if (!user) {
+        throw new Error();
+      }
       res.send(user);
-    }).catch((err) => {
-      res.status(err.statusCode).send({ message: err.message });
-    });
+    }).catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -46,50 +46,62 @@ module.exports.createUser = (req, res) => {
         name, about, avatar, email, password: hash,
       });
     })
-    .then((user) => res.status(StatusCodes.CREATED).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') res.status(StatusCodes.BAD_REQUEST).send({ message: 'Error, please check your data' });
-      else res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: 'An error has occurred on the server' });
-    });
+    .then((user) => {
+      if (!user) {
+        throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, please check your data');
+      }
+      res.status(StatusCodes.CREATED).send({ data: user });
+    }).catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!user) {
+        throw new ErrorHandler(StatusCodes.UNAUTHORIZED, 'Error, please check your data');
+      }
       const token = jwt.sign({ _id: user._id }, 'extreme-secret-key', { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch((err) => {
-      res.status(StatusCodes.UNAUTHORIZED).send({ message: err.message });
-    });
+    .catch(next);
 };
 
-module.exports.updateProfile = (req, res) => {
+module.exports.updateProfile = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, req.body, {
     new: true,
     runValidators: true,
     upsert: false,
-  }).orFail()
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'CastError') res.status(StatusCodes.BAD_REQUEST).send({ message: err.message });
-      else if (err.name === 'DocumentNotFoundError') res.status(StatusCodes.NOT_FOUND).send({ message: err.message });
-      else res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: err.message });
-    });
+  }).then((user) => {
+    if (!user) {
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Error, user not found');
+    }
+    res.send({ data: user });
+  }).catch((err) => {
+    if (err.name === 'CastError') {
+      throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, bad request');
+    }
+    next(err);
+  })
+    .catch(next);
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, req.body, {
     new: true,
     runValidators: true,
     upsert: false,
-  }).orFail()
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'CastError') res.status(StatusCodes.BAD_REQUEST).send({ message: err.message });
-      else if (err.name === 'DocumentNotFoundError') res.status(StatusCodes.NOT_FOUND).send({ message: err.message });
-      else res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: err.message });
-    });
+  }).then((user) => {
+    if (!user) {
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Error, user not found');
+    }
+    res.send({ data: user });
+  }).catch((err) => {
+    if (err.name === 'CastError') {
+      throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, bad request');
+    }
+    next(err);
+  })
+    .catch(next);
 };

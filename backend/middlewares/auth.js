@@ -1,14 +1,15 @@
 const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
+const { ErrorHandler } = require('./errors');
 
 // eslint-disable-next-line
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
+  const err = new ErrorHandler(StatusCodes.UNAUTHORIZED, 'Authorization required');
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res
-      .status(StatusCodes.UNAUTHORIZED)
-      .send({ message: 'Authorization Required' });
+    next(err);
+    return;
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -16,10 +17,8 @@ module.exports = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, 'extreme-secret-key');
-  } catch (err) {
-    return res
-      .status(StatusCodes.FORBIDDEN)
-      .send({ message: 'Authorization Required' });
+  } catch (e) {
+    next(err);
   }
 
   req.user = payload;
