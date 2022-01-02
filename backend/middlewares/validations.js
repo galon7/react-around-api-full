@@ -29,7 +29,7 @@ const validateUser = celebrate({
     avatar: Joi.string().custom(validateURL),
     email: Joi.string().required().min(3).custom(validateEmail),
     password: Joi.string().required().min(8),
-  }).unknown(true),
+  }),
 });
 
 const validateParam = celebrate({

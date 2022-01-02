@@ -42,9 +42,10 @@ module.exports.createUser = (req, res, next) => {
   } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => {
-      User.create({
+      const user = User.create({
         name, about, avatar, email, password: hash,
       });
+      return user;
     })
     .then((user) => {
       if (!user) {
