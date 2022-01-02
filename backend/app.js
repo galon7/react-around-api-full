@@ -35,6 +35,7 @@ const allowedOrigins = [
   'http://localhost:3001',
 ];
 app.use(cors({ origin: allowedOrigins }));
+app.options('*', cors());
 
 app.use(requestLogger);
 
