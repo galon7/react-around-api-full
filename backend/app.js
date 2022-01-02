@@ -29,12 +29,7 @@ mongoose
   .then(console.log('Connected to DB'))
   .catch((err) => console.log(`DB connection error: ${err}`));
 
-const allowedOrigins = [
-  'https://galon.students.nomoreparties.sbs',
-  'http://galon.students.nomoreparties.sbs',
-  'http://localhost:3001',
-];
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors());
 app.options('*', cors());
 
 app.use(requestLogger);
