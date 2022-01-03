@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 const { ErrorHandler } = require('../middlewares/errors');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res, next) => {
@@ -63,7 +64,7 @@ module.exports.login = (req, res, next) => {
       if (!user) {
         throw new ErrorHandler(StatusCodes.UNAUTHORIZED, 'Error, please check your data');
       }
-      const token = jwt.sign({ _id: user._id }, 'extreme-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.send({ token });
     })
     .catch(next);

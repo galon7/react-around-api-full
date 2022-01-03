@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 const { ErrorHandler } = require('./errors');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 // eslint-disable-next-line
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
@@ -16,7 +18,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'extreme-secret-key');
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
   } catch (e) {
     next(err);
   }
