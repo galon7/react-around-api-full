@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-var cors = require('cors');
+const cors = require('cors');
 
 const { PORT = 3000 } = process.env;
 const { errors } = require('celebrate');
