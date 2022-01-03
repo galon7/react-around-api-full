@@ -22,7 +22,7 @@ module.exports.createCard = (req, res, next) => {
       if (!card) {
         throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, please check your data');
       }
-      res.status(StatusCodes.CREATED).send({ data: card });
+      res.status(StatusCodes.CREATED).send(card);
     })
     .catch(next);
 };
@@ -40,7 +40,7 @@ module.exports.deleteCard = (req, res, next) => {
             if (!card) {
               throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Error, card not found');
             }
-            res.status(StatusCodes.OK).send({ data: card });
+            res.status(StatusCodes.OK).send(card);
           })
           .catch((err) => {
             if (err.name === 'CastError') {
@@ -64,7 +64,7 @@ module.exports.likeCard = (req, res, next) => {
     if (!card) {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Error, card not found');
     }
-    res.status(StatusCodes.OK).send({ data: card });
+    res.status(StatusCodes.OK).send(card);
   }).catch((err) => {
     if (err.name === 'CastError') {
       throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, bad request');
@@ -83,7 +83,7 @@ module.exports.dislikeCard = (req, res, next) => {
     if (!card) {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Error, card not found');
     }
-    res.status(StatusCodes.OK).send({ data: card });
+    res.status(StatusCodes.OK).send(card);
   }).catch((err) => {
     if (err.name === 'CastError') {
       throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, bad request');

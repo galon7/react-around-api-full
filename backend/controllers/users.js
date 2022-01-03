@@ -22,7 +22,7 @@ module.exports.getUser = (req, res, next) => {
       if (!user) {
         throw new ErrorHandler(StatusCodes.NOT_FOUND, 'No user found with that id');
       }
-      res.send({ data: user });
+      res.send(user);
     }).catch(next);
 };
 
@@ -51,7 +51,7 @@ module.exports.createUser = (req, res, next) => {
       if (!user) {
         throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, please check your data');
       }
-      res.status(StatusCodes.CREATED).send({ data: user });
+      res.status(StatusCodes.CREATED).send(user);
     }).catch(next);
 };
 
@@ -78,7 +78,7 @@ module.exports.updateProfile = (req, res, next) => {
     if (!user) {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Error, user not found');
     }
-    res.send({ data: user });
+    res.send(user);
   }).catch((err) => {
     if (err.name === 'CastError') {
       throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, bad request');
@@ -97,7 +97,7 @@ module.exports.updateAvatar = (req, res, next) => {
     if (!user) {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Error, user not found');
     }
-    res.send({ data: user });
+    res.send(user);
   }).catch((err) => {
     if (err.name === 'CastError') {
       throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, bad request');
