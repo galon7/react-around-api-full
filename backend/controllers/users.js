@@ -5,7 +5,6 @@ const { ErrorHandler } = require('../middlewares/errors');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 const User = require('../models/user');
-const { object } = require('joi');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})

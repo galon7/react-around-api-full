@@ -34,8 +34,8 @@ const validateUser = celebrate({
 
 const validateParam = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().alphanum().length(24),
-    cardId: Joi.string().alphanum().length(24),
+    id: Joi.string().hex().length(24),
+    cardId: Joi.string().hex().length(24),
   }).unknown(true),
 });
 
