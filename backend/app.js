@@ -10,7 +10,7 @@ const { errors } = require('celebrate');
 const cards = require('./routes/cards');
 const users = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
-const { validateUser } = require('./middlewares/validations');
+const { validateUserLogin } = require('./middlewares/validations');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const auth = require('./middlewares/auth');
@@ -41,8 +41,8 @@ app.use(cors());
 app.options('*', cors());
 
 app.use(express.json());
-app.post('/signin', validateUser, login);
-app.post('/signup', validateUser, createUser);
+app.post('/signin', validateUserLogin, login);
+app.post('/signup', validateUserLogin, createUser);
 
 app.use(auth);
 
