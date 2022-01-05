@@ -22,6 +22,7 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
 });
 
+app.use(requestLogger);
 app.use(limiter);
 app.use(helmet());
 
@@ -38,8 +39,6 @@ app.get('/crash-test', () => {
 
 app.use(cors());
 app.options('*', cors());
-
-app.use(requestLogger);
 
 app.use(express.json());
 app.post('/signin', validateUser, login);

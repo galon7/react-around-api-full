@@ -5,6 +5,7 @@ const { ErrorHandler } = require('../middlewares/errors');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 const User = require('../models/user');
+const { object } = require('joi');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -42,18 +43,19 @@ module.exports.createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
   bcrypt.hash(password, 10)
-    .then((hash) => {
-      const user = User.create({
-        name, about, avatar, email, password: hash,
-      });
-      return user;
-    })
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => {
       if (!user) {
         throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, please check your data');
       }
       res.status(StatusCodes.CREATED).send(user);
-    }).catch(next);
+    }).catch((err) => {
+      if (err.code === 11000) throw new ErrorHandler(StatusCodes.CONFLICT, 'Error, please check your data');
+      else next(err);
+    })
+    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
