@@ -49,7 +49,7 @@ module.exports.createUser = (req, res, next) => {
       if (!user) {
         throw new ErrorHandler(StatusCodes.BAD_REQUEST, 'Error, please check your data');
       }
-      res.status(StatusCodes.CREATED).send(user);
+      User.findOne(user).then((userSafe) => res.status(StatusCodes.CREATED).send(userSafe));
     }).catch((err) => {
       if (err.code === 11000) throw new ErrorHandler(StatusCodes.CONFLICT, 'Error, please check your data');
       else next(err);
