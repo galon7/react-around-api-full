@@ -5,4 +5,4 @@ This repository contains the full API of "Around the U.S." project that features
 
 ## [React application repo](https://github.com/galon7/react-around-auth)
 
-## [Website](https://galon.students.nomoreparties.sbs)
+## [Website](https://react-around-auth.vercel.app)
