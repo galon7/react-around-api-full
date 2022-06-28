@@ -5,7 +5,7 @@ const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 require('dotenv').config();
 
-const { PORT = 3000 } = process.env;
+const { MONGODB_URI, PORT = 3000 } = process.env;
 const { errors } = require('celebrate');
 const cards = require('./routes/cards');
 const users = require('./routes/users');
@@ -27,7 +27,7 @@ app.use(limiter);
 app.use(helmet());
 
 mongoose
-  .connect('mongodb://localhost:27017/aroundb')
+  .connect(MONGODB_URI)
   .then(console.log('Connected to DB'))
   .catch((err) => console.log(`DB connection error: ${err}`));
 
