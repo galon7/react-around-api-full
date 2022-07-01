@@ -27,7 +27,7 @@ app.use(helmet());
 
 mongoose
   .connect(MONGODB_URI)
-  .then(console.log('Connected to DB'))
+  .then(() => console.log('Connected to DB'))
   .catch((err) => console.log(`DB connection error: ${err}`));
 
 app.get('/crash-test', () => {
